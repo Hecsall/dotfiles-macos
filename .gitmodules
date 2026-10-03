@@ -1,3 +1,7 @@
+
+[submodule "private"]
+	path = private
+	url = git@github.com:Hecsall/dotfiles-macos-private.git
 [submodule "nano-highlight"]
 	path = nano-highlight
 	url = https://github.com/serialhex/nano-highlight.git
