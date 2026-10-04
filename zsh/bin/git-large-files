@@ -3,9 +3,57 @@
 # Find the biggest blobs ever committed in a git repo.
 # Named "git-*" so it also works as `git large-files` once zsh/bin is in PATH.
 
+limit=0 # 0 = show everything
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -l|--limit)
+      limit="$2"
+      shift 2
+      ;;
+    --limit=*)
+      limit="${1#*=}"
+      shift
+      ;;
+    -h|--help)
+      echo "Usage: git-large-files [-l|--limit N]"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      echo "Usage: git-large-files [-l|--limit N]" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if ! [[ $limit =~ ^[0-9]+$ ]]; then
+  echo "--limit must be a positive integer" >&2
+  exit 1
+fi
+
+if (( limit > 0 )); then
+  head_cmd=(head -n "$limit")
+else
+  head_cmd=(cat)
+fi
+
+function human_size() {
+  local units=(B KiB MiB GiB TiB) u=1
+  local size=$1
+  while (( size >= 1024 && u < ${#units} )); do
+    size=$(( size / 1024.0 ))
+    (( u++ ))
+  done
+  printf '%.1f%s' "$size" "${units[u]}"
+}
+
 git rev-list --objects --all \
   | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
   | sed -n 's/^blob //p' \
-  | sort --numeric-sort --key=2 \
+  | sort --numeric-sort --reverse --key=2 \
+  | "${head_cmd[@]}" \
   | cut -c 1-12,41- \
-  | $(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
+  | while IFS=' ' read -r hash size path; do
+      printf '%s  %9s  %s\n' "$hash" "$(human_size "$size")" "$path"
+    done
