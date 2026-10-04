@@ -10,7 +10,7 @@ plain Homebrew formulae and sourced directly.
 - **Python** → [uv](https://docs.astral.sh/uv/)
 - **Rust** → rustup / cargo
 - **Docker** → [OrbStack](https://orbstack.dev)
-- **Editor** → nano, with syntax highlighting
+- **Editor** → VSCode, or nano with syntax highlighting
 
 ## Structure
 
