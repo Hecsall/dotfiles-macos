@@ -10,3 +10,14 @@ PROMPT='%B%F{cyan}%~%f${GIT_PROMPT}${NODE_PROMPT}${RUST_PROMPT}${PYTHON_PROMPT}%
 %B%(?.%F{219}.%F{red})${PROMPT_SYMBOL}%f%b '
 
 RPROMPT='%B%F{223}${cmd_time}%f%b'
+
+# Blank line before each prompt (skipped on the very first one) so every
+# command is visually separated from the previous one's output.
+_prompt_blank_line() {
+  if [[ -z $_PROMPT_BLANK_LINE_PRINTED ]]; then
+    _PROMPT_BLANK_LINE_PRINTED=1
+  else
+    print
+  fi
+}
+precmd_functions+=( _prompt_blank_line )
