@@ -6,6 +6,9 @@
 export DOTFILES_PATH=${$(realpath ~/.zshenv):h}
 export PRIVATE_DOTFILES_PATH="$DOTFILES_PATH/private"
 
+# Standalone custom scripts
+export PATH="$DOTFILES_PATH/zsh/bin:$PATH"
+
 # Homebrew
 if [[ -d /opt/homebrew/bin ]]; then
   export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"

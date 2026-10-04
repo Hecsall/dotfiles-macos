@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+# Unlock and cache an SSH key passphrase for this terminal session
+
+if ! command -v keychain &> /dev/null; then
+    echo "'keychain' package is not installed."
+    return 1
+  fi
+  eval "$(keychain --agents ssh --eval -q -Q id_rsa id_ed25519)"
