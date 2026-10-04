@@ -1,0 +1,45 @@
+#!/usr/bin/env zsh
+
+# Prints and / or copies your local / public IP address.
+#
+# Examples:
+#   myip         prints both your local and public IP address
+#   myip -l      prints your local IP address and copies it to your clipboard
+#   myip -p      prints your public IP address and copies it to your clipboard
+
+set -e
+
+# Local IP of whatever interface currently has the default route (not
+# hardcoded to en0, so it also works over ethernet/other interfaces)
+function local_ip() {
+  local iface=$(route get default 2>/dev/null | awk '/interface:/{print $2}')
+  ipconfig getifaddr "$iface" 2>/dev/null
+}
+
+function public_ip() {
+  dig +short myip.opendns.com @resolver1.opendns.com
+}
+
+case "$1" in
+  -l)
+    ip=$(local_ip)
+    echo "$ip"
+    print -n "$ip" | pbcopy
+    ;;
+  -p)
+    ip=$(public_ip)
+    echo "$ip"
+    print -n "$ip" | pbcopy
+    ;;
+  "")
+    echo "Local:  $(local_ip)"
+    echo "Public: $(public_ip)"
+    ;;
+  *)
+    echo "Usage: myip [-l|-p]"
+    echo "  -l  print local IP and copy it to the clipboard"
+    echo "  -p  print public IP and copy it to the clipboard"
+    exit 1
+    ;;
+esac
+

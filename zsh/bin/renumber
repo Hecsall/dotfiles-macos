@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+# Rename every file matching extension $1 to a sequential 3-digit name (001.jpg, ...)
+if [[ "$1" != "" ]]; then
+  i=0
+  for f (*.$1) zmv $f '${(l:3::0:)$((++i))}'.$1
+else
+  echo "Specify file extension"
+  echo "ie.: renumber jpg"
+fi

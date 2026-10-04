@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+
+# Change extension of every file in a folder from $1 to $2
+if [[ "$1" != "" ]] || [[ "$2" != "" ]]; then
+  for f in *.$1; do
+    mv -- "$f" "${f%.$1}.$2"
+  done
+else
+  echo "Specify starting and destination extensions"
+  echo "ie.: changeext png jpg"
+fi

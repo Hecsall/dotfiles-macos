@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+
+find . -type f -name "*.png" -exec pngquant --quality=70-80 --ext=.png -f {} \;

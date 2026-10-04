@@ -1,0 +1,59 @@
+#!/usr/bin/env zsh
+
+# https://gist.github.com/Hecsall/f857b15ef1c97abe489c2c22d16be4c9
+
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]] || [[ -z "$1" ]]; then
+    echo ""
+    echo "M3Ugen"
+    echo "Create an .m3u8 playlist with all the files contained in the root of the specified directory."
+    echo "Scanned files: .flac, .mp3, .mp4, .wav, .aac, .ogg, .m4a"
+    echo ""
+    echo "Usage:"
+    echo "  $(basename $0) -f <music_folder_path>"
+    echo "  $(basename $0) -f <music_folder_path> [-n <playlist_title>]"
+    echo "  $(basename $0) -f <music_folder_path> [-o <ordering>] [-n <playlist_title>]"
+    echo ""
+    echo "Options:"
+    printf '%-25s %-40s\n' "  -h, --help" "Display this message"
+    printf '%-25s %-40s\n' "  -f"         "Folder where the songs are"
+    printf '%-25s %-40s\n' "  -o"         "Songs order, default: -date"
+    printf '%-25s %-40s\n' ""             "Possible values: date, -date, name, -name"
+    printf '%-25s %-40s\n' "  -n"         "Name of the .m3u file but without extension, default: playlist"
+    return 0
+fi
+
+local songs_path order playlist_name
+while getopts f:o:n:h option; do
+    case "$option" in
+        f) songs_path=$(echo $OPTARG | sed 's:/*$::') ;;
+        o)
+            if [[ "$OPTARG" == "name" ]] || [[ "$OPTARG" == "-name" ]] || [[ "$OPTARG" == "date" ]] || [[ "$OPTARG" == "-date" ]]; then
+                order=$OPTARG
+            else
+                echo "\nInvalid value for option -o \nPossible values: \nname, -name, date, -date"
+                return 0
+            fi
+            ;;
+        n) playlist_name=$OPTARG ;;
+        *)
+            echo "Invalid option received, use -h for help."
+            return
+            ;;
+    esac
+done
+
+[[ -z "$playlist_name" ]] && playlist_name="playlist"
+if [[ -z "$songs_path" ]]; then
+    echo "Missing songs path (-f <your_path>)"
+    return
+fi
+[[ -z "$order" ]] && order="-date"
+
+[[ -f "$songs_path/$playlist_name.m3u8" ]] && rm -f "$songs_path/$playlist_name.m3u8"
+
+case "$order" in
+    name)  ls -1 "$songs_path"  | grep -i -E ".flac$|.mp3$|.mp4$|.wav$|.aac$|.ogg$|.m4a$" > "$songs_path/$playlist_name.m3u8" ;;
+    -name) ls -r1 "$songs_path" | grep -i -E ".flac$|.mp3$|.mp4$|.wav$|.aac$|.ogg$|.m4a$" > "$songs_path/$playlist_name.m3u8" ;;
+    date)  ls -tr1 "$songs_path" | grep -i -E ".flac$|.mp3$|.mp4$|.wav$|.aac$|.ogg$|.m4a$" > "$songs_path/$playlist_name.m3u8" ;;
+    -date) ls -t1 "$songs_path" | grep -i -E ".flac$|.mp3$|.mp4$|.wav$|.aac$|.ogg$|.m4a$" > "$songs_path/$playlist_name.m3u8" ;;
+esac

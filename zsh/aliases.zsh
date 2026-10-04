@@ -19,12 +19,6 @@ alias gl="git pull"
 alias glog="git log --graph --topo-order --pretty='%Cred%h%Creset -%Cblue%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
 alias gitgud="git add . && git commit -m '(ノಠ益ಠ)ノ彡┻━┻' && git push"
 
-# Local IP
-alias localip="ipconfig getifaddr en0"
-
-# Public IP (uses dnsutils)
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 
