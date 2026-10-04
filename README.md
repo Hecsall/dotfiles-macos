@@ -10,7 +10,7 @@ plain Homebrew formulae and sourced directly.
 - **Python** → [uv](https://docs.astral.sh/uv/)
 - **Rust** → rustup / cargo
 - **Docker** → [OrbStack](https://orbstack.dev)
-- **Editor** → nano, with syntax highlighting from the `nano-highlight` submodule
+- **Editor** → nano, with syntax highlighting
 
 ## Structure
 
@@ -18,7 +18,7 @@ plain Homebrew formulae and sourced directly.
 .zshenv           # loaded always; PATH/env needed everywhere
 .zprofile         # loaded once per login shell (OrbStack init, private profile)
 .zshrc            # interactive shell config, sources everything in zsh/
-.nanorc           # nano config, pulls in nano-highlight/
+.nanorc           # nano config
 Brewfile          # every tool/plugin these dotfiles depend on
 install.sh        # brew bundle + symlink everything into $HOME
 zsh/
@@ -31,12 +31,11 @@ zsh/
   python.zsh      # uv-backed python version prompt segment
   time.zsh        # right-prompt command execution timer
   prompt.zsh      # assembles the final two-line prompt
-  aliases.zsh     # short general aliases
-  functions.zsh   # general shell functions
-  media.zsh       # image/audio/pdf conversion helpers
+  aliases.zsh     # short aliases + update-dotfiles
   print256colors.zsh
+  bin/            # standalone scripts, added to $PATH by .zshenv (see below)
 private/          # git submodule (separate repo) holding private configs
-nano-highlight/   # git submodule, Nano syntax highlighting rules
+nano/             # custom nanorc files
 ```
 
 ## Prompt
@@ -54,6 +53,8 @@ nano-highlight/   # git submodule, Nano syntax highlighting rules
 - Git status icons (shown after the branch name): ✖ unmerged, ● staged,
   ✚ unstaged, … untracked, ⚑ stashed, ↑ ahead, ↓ behind, ✔ clean.
 - Right prompt shows how long the last command took.
+- A blank line is printed before every prompt (except the very first) so each
+  command's output stays visually separated from the next one.
 
 Everything is customizable from `zsh/variables.zsh` (icons, colors, the
 `PROMPT_SYMBOL`) without touching the logic in the other files.
@@ -68,14 +69,13 @@ cd ~/.dotfiles
 
 > The `private` submodule only clones successfully if your SSH key has access
 > to `Hecsall/dotfiles-macos-private`. Without access, clone without
-> `--recurse-submodules` and run `git submodule update --init nano-highlight`
-> to still get the public one.
+> `--recurse-submodules` to still get the public one.
 
 `install.sh` will:
 1. Check Homebrew is installed (install it yourself from https://brew.sh first if not).
 2. Run `brew bundle` to install every tool/plugin in `Brewfile`.
 3. Fetch submodules.
-4. Symlink `.zshenv`, `.zshrc`, `.zprofile`, `.nanorc` and `nano-highlight`
+4. Symlink `.zshenv`, `.zshrc`, `.zprofile`, `.nanorc`
    into `$HOME`, **overwriting existing files** — back them up first.
 5. Run `private/install.sh`, which symlinks other private configs
 
@@ -85,9 +85,9 @@ cd ~/.dotfiles
 update-dotfiles
 ```
 
-That's an alias (`.u`) for a function in `zsh/functions.zsh` which just runs
+There's an alias (`.u`) for this function which just runs
 `git pull --recurse-submodules` here and restarts the shell, so both this repo
-and the `private`/`nano-highlight` submodules stay in sync.
+and the `private` submodule stay in sync.
 
 ## Pushing changes
 
@@ -99,12 +99,12 @@ git commit -m "..."
 git push
 ```
 
-`private/` and `nano-highlight/` are their own independent git repos checked
-out as submodules, so changes made *inside* them need their own commit/push
+`private/` is an independent git repo checked
+out as submodules, so changes made *inside* it need their own commit/push
 before updating the pointer here:
 
 ```sh
-cd private                        # or nano-highlight
+cd private
 git add -A
 git commit -m "..."
 git push
