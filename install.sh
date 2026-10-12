@@ -16,10 +16,10 @@ fi
 echo "==> Installing/updating tools from Brewfile"
 brew bundle --file="$ABS_DOTFILES_PATH/Brewfile"
 
-# rustup-init only bootstraps the installer, actually install the toolchain
+# Install Rust via the official rustup script (not Homebrew)
 if [[ ! -x "$HOME/.cargo/bin/rustc" ]]; then
   echo "==> Installing the Rust toolchain via rustup"
-  rustup-init -y --no-modify-path --default-toolchain stable
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain stable
 fi
 
 # --- Submodules -------------------------------------------------------------
