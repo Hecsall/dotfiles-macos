@@ -10,9 +10,6 @@ brew "volta"
 # Python version/venv manager
 brew "uv"
 
-# Rust toolchain installer (provides ~/.cargo/env, rustup, cargo)
-brew "rustup-init"
-
 # Native ZSH plugins, sourced directly (no plugin manager, see zsh/plugins.zsh)
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
