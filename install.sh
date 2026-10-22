@@ -16,6 +16,9 @@ fi
 echo "==> Installing/updating tools from Brewfile"
 brew bundle --file="$ABS_DOTFILES_PATH/Brewfile"
 
+# Install latest Node LTS through volta
+volta install node
+
 # rustup-init only bootstraps the installer, actually install the toolchain
 if [[ ! -x "$HOME/.cargo/bin/rustc" ]]; then
   echo "==> Installing the Rust toolchain via rustup"
